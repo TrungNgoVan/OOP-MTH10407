@@ -1,0 +1,7 @@
+Use-cases
+
+- Register a new borrower
+- Add a new book to the stock
+- Product a list of books available for loan
+- Product a list of books out on loan
+- Record
