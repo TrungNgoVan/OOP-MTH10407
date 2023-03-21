@@ -182,7 +182,6 @@ Borrower::~Borrower(){
     cout << "Borrower is destroyed" << endl;
 }
 
-// Getters & Setters
 string Borrower::getName(){
     return _theName;
 }
@@ -197,7 +196,6 @@ void Borrower::setTheBorrowedBooks(map<string, Book*> theBorrowedBooks){
     this->_theBorrowedBooks = theBorrowedBooks;
 }
 
-// Other methods
 void Borrower::attachBook(Book* aBook){
     _theBorrowedBooks.insert(pair<string, Book*>(aBook->getCatalogueNumber(), aBook));
 }
@@ -225,7 +223,6 @@ Library::~Library(){
     _theBorrowers.clear();
 }
 
-//Getters & Setters
 map<string, Book*> Library::getTheLoanStock(){
     return _theLoanStock;
 }
@@ -240,7 +237,6 @@ void Library::setTheBorrowers(map<string, Borrower*> theBorrowers){
     this->_theBorrowers = theBorrowers;
 }
 
-// Other methods
 void Library::registerOneBorrower(Borrower *aBorrower){
     // add the new borrower to the map
     this->_theBorrowers.insert(pair<string, Borrower*>(aBorrower->getName(), aBorrower));
