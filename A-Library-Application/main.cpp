@@ -72,6 +72,7 @@ class Library
 private:
     string _theName;
     // map of catalogue number and book
+    // Note: not erase
     map<string, Book *> _theLoanStock;
     // map of borrower name and borrower
     map<string, Borrower *> _theBorrowers;
@@ -93,7 +94,7 @@ public:
     void setTheBorrowers(map<string, Borrower *>);
 
     // Other methods
-    void registerOneBorrower(Borrower *);
+    void registerOneBorrower(string);
     void addOneBook(Book *);
     void displayBooksAvailableForLoan();
     void displayBooksOnLoan();
@@ -215,7 +216,7 @@ void Borrower::setName(string name)
 {
     this->_theName = name;
 }
-
+// NODE
 map<string, Book *> Borrower::getTheBorrowedBooks()
 {
     return _theBorrowedBooks;
@@ -261,6 +262,7 @@ map<string, Book *> Library::getTheLoanStock()
 {
     return _theLoanStock;
 }
+// NOTE
 void Library::setTheLoanStock(map<string, Book *> theLoanStock)
 {
     this->_theLoanStock = theLoanStock;
@@ -275,9 +277,10 @@ void Library::setTheBorrowers(map<string, Borrower *> theBorrowers)
     this->_theBorrowers = theBorrowers;
 }
 
-void Library::registerOneBorrower(Borrower *aBorrower)
+void Library::registerOneBorrower(string nameBorrower)
 {
     // add the new borrower to the map
+    Borrower *aBorrower = new Borrower("Borrower 1", map<string, Book *>());
     this->_theBorrowers.insert(pair<string, Borrower *>(aBorrower->getName(), aBorrower));
 }
 
@@ -290,28 +293,29 @@ void Library::addOneBook(Book *aBook)
 
 void Library::displayBooksAvailableForLoan()
 {
-    if (this->_theLoanStock.empty())
-    {
-        cout << "No books available for loan" << endl;
-        return;
-    }
+    bool check = false;
     for (auto book : this->_theLoanStock)
     {
-        cout << book.second->getTitle() << endl;
+        if (book.second->getTheBorrower() == nullptr)
+        {
+            check = true;
+            cout << book.second->getTitle() << endl;
+        }
+    }
+    if (check == false)
+    {
+        cout << "No books available for loan" << endl;
     }
 }
 
 void Library::displayBooksOnLoan()
 {
     bool check = false;
-    for (auto borrower : this->_theBorrowers)
+    for (auto book : this->_theLoanStock)
     {
-        if (!borrower.second->getTheBorrowedBooks().empty() && check == false)
+        if (book.second->getTheBorrower() != nullptr)
         {
             check = true;
-        }
-        for (auto book : borrower.second->getTheBorrowedBooks())
-        {
             cout << book.second->getTitle() << endl;
         }
     }
@@ -321,6 +325,7 @@ void Library::displayBooksOnLoan()
     }
 }
 
+// Note
 void Library::lendOneBook(string aCatalogueNumber, string aBorrowerName)
 {
     cout << "Lending book: " << aCatalogueNumber << " to " << aBorrowerName << endl;
@@ -335,8 +340,7 @@ void Library::lendOneBook(string aCatalogueNumber, string aBorrowerName)
         // add borrower to the book
         book->second->attachBorrower(borrower->second);
         // remove the book from the library's map
-        this->_theLoanStock.erase(book);
-        //
+        //! not erase book from the map because it will cause the book to be deleted
     }
     else
     {
@@ -385,8 +389,7 @@ int main()
     Book *book4 = new Book("Catalogue 4", "Book 4", "Author 4");
 
     // create a borrower
-    Borrower *aBorrower = new Borrower("Borrower 1", map<string, Book *>());
-    aLibrary->registerOneBorrower(aBorrower);
+    aLibrary->registerOneBorrower("Borrower-1");
 
     // add the books to the library
     aLibrary->addOneBook(book1);
