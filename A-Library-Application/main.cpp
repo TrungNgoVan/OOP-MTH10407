@@ -72,7 +72,6 @@ class Library
 private:
     string _theName;
     // map of catalogue number and book
-    // Note: not erase
     map<string, Book *> _theLoanStock;
     // map of borrower name and borrower
     map<string, Borrower *> _theBorrowers;
@@ -99,7 +98,7 @@ public:
     void displayBooksAvailableForLoan();
     void displayBooksOnLoan();
     void lendOneBook(string, string);
-    void returnOneBook(string, string);
+    void returnOneBook(string);
 };
 
 // Implementation of classes
@@ -348,31 +347,18 @@ void Library::lendOneBook(string aCatalogueNumber, string aBorrowerName)
     }
 }
 
-void Library::returnOneBook(string aCatalogueNumber, string aBorrowerName)
+void Library::returnOneBook(string aCatalogueNumber)
 {
-    cout << "Returning book: " << aCatalogueNumber << " from " << aBorrowerName << endl;
-    auto borrower = this->_theBorrowers.find(aBorrowerName);
-    if (borrower != this->_theBorrowers.end())
-    {
-        // find the book
-        auto book = borrower->second->getTheBorrowedBooks().find(aCatalogueNumber);
-        if (book != borrower->second->getTheBorrowedBooks().end())
-        {
-            // add the book to the library's map
-            this->_theLoanStock.insert(pair<string, Book *>(aCatalogueNumber, book->second));
-            // remove the book from the borrower's map
-            borrower->second->detachBook(book->second);
-            // remove the borrower from the book
-            book->second->detachBorrower(borrower->second);
-        }
-        else
-        {
-            cout << "The book is not of the borrower" << endl;
-        }
-    }
-    else
-    {
-        cout << "The borrower is not registered" << endl;
+    cout << "Return book" << aCatalogueNumber;
+    auto book =this->_theLoanStock.find(aCatalogueNumber);
+    if (book == this->_theLoanStock.end()){
+        cout << "Book not of Library\n";
+        return;
+    }   
+    else {
+        auto borrower = this->_theBorrowers.find(book->second->getTheBorrower()->getName());
+        borrower->second->detachBook(book->second);
+        book->second->detachBorrower(borrower->second);
     }
 }
 
@@ -417,7 +403,7 @@ int main()
     aLibrary->displayBooksOnLoan();
 
     // return a book
-    aLibrary->returnOneBook("Catalogue 1", "Borrower 1");
+    aLibrary->returnOneBook("Catalogue 1");
 
     // display the books available for loan
     cout << "Books available for loan:" << endl;
